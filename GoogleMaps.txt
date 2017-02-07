@@ -1,8 +1,10 @@
-
+SEB LAT/LONG:
 32.827493, -83.649420
 
+Map with Selectable points:
 https://mynasadata.larc.nasa.gov/latitudelongitude-finder/
 
+Base Google MAPS JavaScript
 <!DOCTYPE html>
 <html>
   <head>
