@@ -34,7 +34,7 @@ class Map(object):
 
 if __name__ == "__main__":
         map = Map()
-        # Add Beijing, you'll want to use your geocoded points here:
-        map.add_point((39.908715, 116.397389))
+
+        map.add_point((32.8288, -83.6496))
         with open("output.html", "w") as out:
             print(map, file=out)
