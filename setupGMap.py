@@ -1,4 +1,5 @@
-from distutils.core import setup
+#from distutils.core import setup #WINDOWS
+from setuptools import setup #LINUX
 
 setup (name = 'GooMPy',
     version = '0.1',
