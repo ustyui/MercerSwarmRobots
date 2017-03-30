@@ -5,8 +5,6 @@ setup (name = 'GooMPy',
     install_requires = ['PIL'],
     description = 'Google Maps for Python',
     packages = ['goompy',],
-    author='Alec Singer and Simon D. Levy',
-    author_email='simon.d.levy@gmail.com',
     license='LGPL',
     platforms='Linux; Windows; OS X'
     )
