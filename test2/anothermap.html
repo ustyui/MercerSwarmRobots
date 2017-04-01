@@ -146,14 +146,14 @@
 
       ClickEventHandler.prototype.placeMarker = function(latLng) {
         console.log('LatLng:'+latLng);
-        // var marker = new google.maps.Marker({
-        //         map: this,
-        //         position: latLng,
-        //       });
-              // marker.addListener('click', function() {
-              //   window.location = marker.url;
+        var marker = new google.maps.Marker({
+                map: this.map,
+                position: latLng,
+              });
+              marker.addListener('click', function() {
+                window.location = marker.url;
 
-              // });
+              });
       };
 
 
@@ -224,7 +224,7 @@
       function doNothing() {}
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAeuBDdFj7e9OS-gIXIKD51gVd3Ko4hod4&callback=initMap">
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAeuBDdFj7e9OS-gIXIKD51gVd3Ko4hod4&callback=initMap">
     </script>
     <script type="text/javascript">
     var sock;
