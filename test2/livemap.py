@@ -78,6 +78,15 @@ class WebSocketBroadcaster(tornado.websocket.WebSocketHandler):
         global WEBSOCKS
         WEBSOCKS.remove(self)
 
+class EchoWebSocket(tornado.websocket.WebSocketHandler):
+    def open(self):
+        print("WebSocket opened")
+
+    def on_message(self, message):
+        self.write_message(u"You said: " + message)
+
+    def on_close(self):
+        print("WebSocket closed")
 
 settings = {
     # FIXME: Should really move maps.html into static/, and change the last
@@ -90,6 +99,7 @@ application = tornado.web.Application([
         (r"/", MainHandler),
         (r"/ping", RandomLatLngSender),
         (r"/sock", WebSocketBroadcaster),
+        (r"/websocket", EchoWebSocket),
         ],
     **settings)
 

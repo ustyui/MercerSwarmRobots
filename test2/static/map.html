@@ -23,14 +23,7 @@
     <div id="map"></div>
 
     <script>
-      var customLabel = {
-        restaurant: {
-          label: 'R'
-        },
-        bar: {
-          label: 'B'
-        }
-      };
+      
 
         function initMap() {
 
@@ -44,62 +37,6 @@
 
         var clickHandler = new ClickEventHandler(map, origin);
 
-        var infoWindow = new google.maps.InfoWindow;
-
-          // Change this depending on the name of your PHP or XML file
-          downloadUrl('https://www.tivahost.com/test/maps/NLPOI.php', function(data) {
-            var xml = data.responseXML;
-            var markers = xml.documentElement.getElementsByTagName('marker');
-            Array.prototype.forEach.call(markers, function(markerElem) {
-              var name = markerElem.getAttribute('name');
-              var address = markerElem.getAttribute('address');
-              var type = markerElem.getAttribute('type');
-              var point = new google.maps.LatLng(
-                  parseFloat(markerElem.getAttribute('lat')),
-                  parseFloat(markerElem.getAttribute('lng')));
-
-              var infowincontent = document.createElement('div');
-              var strong = document.createElement('strong');
-              strong.textContent = name
-              infowincontent.appendChild(strong);
-              infowincontent.appendChild(document.createElement('br'));
-
-              var text = document.createElement('text');
-              text.textContent = address
-              infowincontent.appendChild(text);
-
-
-              var icon = customLabel[type] || {};
-
-
-            var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
-            var icons = {
-              restaurant: {
-                icon: iconBase + 'parking_lot_maps.png'
-              },
-              bar: {
-                icon: iconBase + 'library_maps.png'
-              },
-              info: {
-                icon: iconBase + 'info-i_maps.png'
-              }
-            };
-
-              var marker = new google.maps.Marker({
-                map: map,
-                position: point,
-                icon: icons[type].icon,
-
-                label: icon.label
-              });
-              marker.addListener('click', function() {
-                infoWindow.setContent(infowincontent);
-                infoWindow.open(map, marker);
-
-              });
-
-            });
-          });
         }
 
 
@@ -110,14 +47,7 @@
       var ClickEventHandler = function(map, origin) {
         this.origin = origin;
         this.map = map;
-        this.directionsService = new google.maps.DirectionsService;
-        this.directionsDisplay = new google.maps.DirectionsRenderer;
-        this.directionsDisplay.setMap(map);
-//        this.placesService = new google.maps.places.PlacesService(map);
-        this.infowindow = new google.maps.InfoWindow;
-        this.infowindowContent = document.getElementById('infowindow-content');
-        this.infowindow.setContent(this.infowindowContent);
-
+ 
         // Listen for clicks on the map.
         this.map.addListener('click', this.handleClick.bind(this));
       };
@@ -155,54 +85,19 @@
                 window.location = marker.url;
 
               });
+
+
+        var ws = new WebSocket("ws://localhost:8888/websocket");
+        ws.onopen = function() {
+           ws.send(latLng);
+        };
+        ws.onmessage = function (evt) {
+           alert(evt.data);
+        };
       };
 
 
-      ClickEventHandler.prototype.calculateAndDisplayRoutePlace = function(placeId) {
-        var me = this;
-        this.directionsService.route({
-          origin: this.origin,
-          destination: {placeId: placeId},
-          travelMode: 'WALKING'
-        }, function(response, status) {
-          if (status === 'OK') {
-            me.directionsDisplay.setDirections(response);
-          } else {
-            window.alert('Directions request failed due to ' + status);
-          }
-        });
-      };
-
-      ClickEventHandler.prototype.calculateAndDisplayRoute = function(latLng) {
-        var me = this;
-        this.directionsService.route({
-          origin: this.origin,
-          destination: latLng,
-          travelMode: 'WALKING'
-        }, function(response, status) {
-          if (status === 'OK') {
-            me.directionsDisplay.setDirections(response);
-          } else {
-            window.alert('Directions request failed due to ' + status);
-          }
-        });
-      };      
-
-      ClickEventHandler.prototype.getPlaceInformation = function(placeId) {
-        var me = this;
-        this.placesService.getDetails({placeId: placeId}, function(place, status) {
-          if (status === 'OK') {
-            me.infowindow.close();
-            me.infowindow.setPosition(place.geometry.location);
-            me.infowindowContent.children['place-icon'].src = place.icon;
-            me.infowindowContent.children['place-name'].textContent = place.name;
-            me.infowindowContent.children['place-id'].textContent = place.place_id;
-            me.infowindowContent.children['place-address'].textContent =
-                place.formatted_address;
-            me.infowindow.open(me.map);
-          }
-        });
-      };
+      
 
 
 
