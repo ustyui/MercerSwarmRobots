@@ -137,104 +137,92 @@ print("Setting V2 (System status: %s)" % vehicle2.system_status.state)
 vehicle2.system_status.state = "ACTIVE"
 print("V2 System status: %s" % vehicle2.system_status.state)
 
-# Set the LocationGlobal to head towards
-a_location = LocationGlobal(32.8271423,-83.6498889, 30)
-a_location2 = LocationGlobal(32.8271299,-83.6497213, 30)
-a_location3 = LocationGlobal(32.8269879,-83.6497682, 30)
-a_location4 = LocationGlobal(32.8269586,-83.6496784,30)
-a_location5 = LocationGlobal(32.8267986, -83.6497951,30)
-print("1st location created: %s " % a_location)
-print("2nd location created: %s " % a_location2)
-print("3rd location created: %s " % a_location3)
-print("4th location created: %s " % a_location4)
-print("5th location created: %s " % a_location5)
+# # Set the LocationGlobal to head towards
+# a_location = LocationGlobal(32.8271423,-83.6498889, 30)
+# a_location2 = LocationGlobal(32.8271299,-83.6497213, 30)
+# a_location3 = LocationGlobal(32.8269879,-83.6497682, 30)
+# a_location4 = LocationGlobal(32.8269586,-83.6496784,30)
+# a_location5 = LocationGlobal(32.8267986, -83.6497951,30)
+# print("1st location created: %s " % a_location)
+# print("2nd location created: %s " % a_location2)
+# print("3rd location created: %s " % a_location3)
+# print("4th location created: %s " % a_location4)
+# print("5th location created: %s " % a_location5)
+def goToLocation(latitude, longtitude):
+    goTOLocation = LocationGlobal(latitude, longtitude, 30)
+    print("Location created: %s " % goToLocation)
 
-goTOLocation = a_location5
-time.sleep(10)
-print("Sending V1 to location %s" % goTOLocation)
-vehicle.simple_goto(goTOLocation)
-print("Sending V2 to location %s" % goTOLocation)
-vehicle2.simple_goto(goTOLocation)
-print("Sending V1 to location %s" % goTOLocation)
-vehicle.simple_goto(goTOLocation)
-print("Sending V2 to location %s" % goTOLocation)
-vehicle2.simple_goto(goTOLocation)
-print("Sending V1 to location %s" % goTOLocation)
-vehicle.simple_goto(goTOLocation)
-print("Sending V2 to location %s" % goTOLocation)
-vehicle2.simple_goto(goTOLocation)
-print("going")
-time.sleep(5)
+    time.sleep(10)
+    print("Sending V1 to location %s" % goTOLocation)
+    vehicle.simple_goto(goTOLocation)
+    print("Sending V2 to location %s" % goTOLocation)
+    vehicle2.simple_goto(goTOLocation)
+    time.sleep(1)
+    print("Sending V1 to location %s" % goTOLocation)
+    vehicle.simple_goto(goTOLocation)
+    print("Sending V2 to location %s" % goTOLocation)
+    vehicle2.simple_goto(goTOLocation)
+    time.sleep(1)
+    print("Sending V1 to location %s" % goTOLocation)
+    vehicle.simple_goto(goTOLocation)
+    print("Sending V2 to location %s" % goTOLocation)
+    vehicle2.simple_goto(goTOLocation)
+    print("going")
+    time.sleep(5)
 
-#home = vehicle.location.global_frame
-#wp = get_location_offset_meters(home, 0, 0, 10);
-#cmd = Command(0,0,0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT, mavutil.mavlink.MAV_CMD_NAV_LAND, 0, 1, 0, 0, 0, 0, wp.lat, wp.lon, wp.alt)
+    # count = 0
+    print("V1 Home: %s" % home)
+    print("V2 Home: %s" % home2)
 
-
-
-#print(" count: %s" % currcmds.count
-#loc = LocationGlobalRelative(34.364114,-84.166022,30.0)
-#print(" Made location %s" % loc
-# currcmds = vehicle.commands
-#print(" vehicle.commands"
-#print(" count: %s" % currcmds.count
-#currcmds.clear()
-#print(" clear()"
-#currcmds.add(cmd)
-#print(" add(location)"
-#print(" count: %s" % currcmds.count
-#currcmds.upload()
-#print(" Uploading...."
-#time.sleep(5)
-#currcmds.download()
-#currcmds.waitReady()
-# print(" current num of commands: %s" % currcmds.count
-count = 0
-print("V1 Home: %s" % home)
-print("V2 Home: %s" % home2)
-
-print("V1 GPS: %s" % vehicle.gps_0)
-print("V1 GPS location: %s" % vehicle.location.global_frame)
-print("V1 Last heartbeat: %s" % vehicle.last_heartbeat)
-print("V1 Is Armable?: %s" % vehicle.is_armable)
-print("V1 Armed?: %s" % vehicle.armed)
-print("V1 System status: %s" % vehicle.system_status.state)
-print("V2 GPS: %s" % vehicle2.gps_0)
-print("V2 GPS location: %s" % vehicle2.location.global_frame)
-print("V2 Last heartbeat: %s" % vehicle2.last_heartbeat)
-print("V2 Is Armable?: %s" % vehicle2.is_armable)
-print("V2 Armed?: %s" % vehicle2.armed)
-print("V2 System status: %s" % vehicle2.system_status.state)
-
-
-while(vehicle.last_heartbeat < 29.0 and vehicle2.last_heartbeat < 29.0):
-    count += 1
-    print("---------------------------------------------------------------------------------------")
     print("V1 GPS: %s" % vehicle.gps_0)
     print("V1 GPS location: %s" % vehicle.location.global_frame)
     print("V1 Last heartbeat: %s" % vehicle.last_heartbeat)
+    print("V1 Is Armable?: %s" % vehicle.is_armable)
+    print("V1 Armed?: %s" % vehicle.armed)
     print("V1 System status: %s" % vehicle.system_status.state)
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("---------------------------------------------------")
     print("V2 GPS: %s" % vehicle2.gps_0)
     print("V2 GPS location: %s" % vehicle2.location.global_frame)
     print("V2 Last heartbeat: %s" % vehicle2.last_heartbeat)
+    print("V2 Is Armable?: %s" % vehicle2.is_armable)
+    print("V2 Armed?: %s" % vehicle2.armed)
     print("V2 System status: %s" % vehicle2.system_status.state)
-    time.sleep(1.0)
+    print("\n-----------------------------------------------------------------------------------------\n\n")
+
+
+    while(vehicle.last_heartbeat < 29.0 and vehicle2.last_heartbeat < 29.0):
+        # count += 1
+        print("---------------------------------------------------------------------------------------")
+        print("V1 GPS: %s" % vehicle.gps_0)
+        print("V1 GPS location: %s" % vehicle.location.global_frame)
+        print("V1 Last heartbeat: %s" % vehicle.last_heartbeat)
+        print("V1 System status: %s" % vehicle.system_status.state)
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("V2 GPS: %s" % vehicle2.gps_0)
+        print("V2 GPS location: %s" % vehicle2.location.global_frame)
+        print("V2 Last heartbeat: %s" % vehicle2.last_heartbeat)
+        print("V2 System status: %s" % vehicle2.system_status.state)
+        time.sleep(1.0)
+
+    endItAll()
+
+
+def endItAll():
+    # Close vehicle object before exiting script
+    vehicle.close()
+    vehicle2.close()
+
+    # Shut down simulator
+    #sitl.stop()
+    print("Completed")
 
 
 
-# Close vehicle object before exiting script
-vehicle.close()
-vehicle2.close()
 
-# Shut down simulator
-#sitl.stop()
-print("Completed")
-
-
-
-
-
+def parseMessage(message):
+    latitude = message[1:message.find(',')]
+    longtitude = message[message.find(''):message.length()-1]
+    goToLocation(float(latitude), float(longtitude))
 
 
 
@@ -396,6 +384,7 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         self.write_message(u"You said: " + message)
         print("You said: "+message)
+        parseMessage(message)
 
     def on_close(self):
         print("WebSocket closed")
