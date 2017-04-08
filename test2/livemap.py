@@ -1,17 +1,26 @@
 
-#print("Start simulator (SITL)"
-#import dronekit_sitl
-#sitl = dronekit_sitl.start_default()
-#connection_string = sitl.connection_string()
-#connection_string = "/dev/serial/by-id/usb-3D_Robotics_PX4_FMU_v2.x_0-if00"
+
+
+
+# print("Start simulator (SITL)"
+# import dronekit_sitl
+# sitl = dronekit_sitl.start_default()
+# connection_string = sitl.connection_string()
+# connection_string = "/dev/serial/by-id/usb-3D_Robotics_PX4_FMU_v2.x_0-if00"
+
+
+from dronekit import *
+import time,math
+
+
+
 connection_string = "/dev/ttyUSB0,57600"
 connection_string2 = "/dev/ttyUSB1,57600"
 
 #connection_string = "/dev/ttyACM0,57600"
 # Import DroneKit-Python
 #from dronekit import connect, VehicleMode, CommandSequence, Command, mavutil, locations
-from dronekit import *
-import time,math
+
 
 
 # Connect to the Vehicle.
@@ -54,19 +63,6 @@ def get_location_offset_meters(original_location, dNorth, dEast, alt):
     newlon = original_location.lon + (dLon * 180/math.pi)
     return LocationGlobal(newlat, newlon,original_location.alt+alt)
 
-
-#cmds = vehicle.commands
-#cmds.clear()
-#lat = -34.364114,
-#lon = 149.166022
-#altitude = 30.0
-#cmd = Command(0,0,0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT, mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,
-#    0, 0, 0, 0, 0, 0,
-#    lat, lon, altitude)
-#cmds.add(cmd)
-#cmds.upload()
-
-# Set mode to guided - this is optional as the simple_goto method will change the mode if needed.
 
 
 while vehicle.gps_0.fix_type < 3 or vehicle2.gps_0.fix_type < 3:
@@ -148,9 +144,9 @@ print("V2 System status: %s" % vehicle2.system_status.state)
 # print("3rd location created: %s " % a_location3)
 # print("4th location created: %s " % a_location4)
 # print("5th location created: %s " % a_location5)
-def goToLocation(latitude, longtitude):
+def goToLocationFunc(latitude, longtitude):
     goTOLocation = LocationGlobal(latitude, longtitude, 30)
-    print("Location created: %s " % goToLocation)
+    print("Location created: %s " % goTOLocation)
 
     time.sleep(10)
     print("Sending V1 to location %s" % goTOLocation)
@@ -192,6 +188,16 @@ def goToLocation(latitude, longtitude):
 
     while(vehicle.last_heartbeat < 29.0 and vehicle2.last_heartbeat < 29.0):
         # count += 1
+        lat1 = vehicle.location.global_frame.lat
+        lat2 = vehicle2.location.global_frame.lat
+        lon1 = vehicle.location.global_frame.lon
+        lon2 = vehicle2.location.global_frame.lon
+        measure(lat1, lat2, lon1, lon2)
+        print("\n--------------------------------------------------------------------------------------\n")
+        print("Sending V1 to location %s" % goTOLocation)
+    	vehicle.simple_goto(goTOLocation)
+    	print("Sending V2 to location %s" % goTOLocation)
+    	vehicle2.simple_goto(goTOLocation)
         print("---------------------------------------------------------------------------------------")
         print("V1 GPS: %s" % vehicle.gps_0)
         print("V1 GPS location: %s" % vehicle.location.global_frame)
@@ -216,14 +222,51 @@ def endItAll():
     #sitl.stop()
     print("Completed")
 
+def createRandomCoords(lat, lon):
+	randLoc1 = LocationGlobal(32.82690780770233, -83.6495241522789, 30)
+	randLoc2 = LocationGlobal(lat, lon, 30)
+	measure(randLoc1.lat, randLoc2.lat, randLoc1.lon, randLoc2.lon)
 
 
+# def measure(lat1, lon1, lat2, lon2):  # generally used geo measurement function
+#     R = 6378.137; # Radius of earth in KM
+#     dLat = lat2 * math.pi / 180 - lat1 * math.pi / 180;
+#     dLon = lon2 * math.pi / 180 - lon1 * math.pi / 180;
+#     a = math.sin(dLat/2) * math.sin(dLat/2) +    math.cos(lat1 * math.pi / 180) * math.cos(lat2 * math.pi / 180) * math.sin(dLon/2) * math.sin(dLon/2);
+#     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a));
+#     d = R * c;
+#     meters = d * 1000; # meters
+#     if (meters <= 2):
+#     	# vehicle2.mode = "HALT"
+#     	print("Halting V2")
+#     else:
+#     	# vehicle2.mode = "GUIDED"
+#     	pass
+#     print("Distance: "+str(meters))
+    	
+def measure(lat1, lat2, lon1, lon2):
+	x1 = lat1 * math.pi / 180.0
+	x2 = lat2 * math.pi / 180.0
+	delta = (lon2-lon1) * math.pi / 180.0
+	R = 6371000 # gives d in metres
+	d = math.acos( math.sin(x1)*math.sin(x2) + math.cos(x1)*math.cos(x2) * math.cos(delta) ) * R;
+	if (d <= 4.0):
+		vehicle2.mode = "HALT"
+		print("Halting V2")
+		
+	else:
+		vehicle2.mode = "GUIDED"
+		# vehicle2.simple_goto()
+		print("Moving V2")
+
+		pass	
+	print("Distance: "+str(d))
 
 def parseMessage(message):
     latitude = message[1:message.find(',')]
-    longtitude = message[message.find(''):message.length()-1]
-    goToLocation(float(latitude), float(longtitude))
-
+    longtitude = message[message.find(',')+2:len(message)-1]
+    goToLocationFunc(float(latitude), float(longtitude))
+    # createRandomCoords(float(latitude), float(longtitude))
 
 
 
@@ -383,8 +426,9 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
 
     def on_message(self, message):
         self.write_message(u"You said: " + message)
-        print("You said: "+message)
-        parseMessage(message)
+        print("You said:"+message)
+        print(type(str(message)))
+        parseMessage(str(message))
 
     def on_close(self):
         print("WebSocket closed")
